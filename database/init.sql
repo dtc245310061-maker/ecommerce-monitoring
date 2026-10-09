@@ -31,4 +31,7 @@ CREATE TABLE IF NOT EXISTS order_items (
 INSERT INTO products (name, description, price, stock) VALUES
 ('Tai nghe Bluetooth', 'Tai nghe không dây cho nhu cầu hằng ngày', 450000, 25),
 ('Bàn phím cơ', 'Bàn phím cơ dành cho học tập và làm việc', 790000, 15),
-('Chuột không dây', 'Chuột không dây gọn nhẹ', 250000, 40);
+('Chuột không dây', 'Chuột không dây gọn nhẹ', 250000, 40),
+('Webcam Full HD', 'Webcam hình ảnh rõ nét cho học tập và họp trực tuyến', 650000, 18),
+('Loa Bluetooth mini', 'Loa Bluetooth nhỏ gọn, âm thanh sống động', 320000, 22),
+('Cáp sạc nhanh USB-C', 'Cáp sạc bền chắc hỗ trợ sạc nhanh', 120000, 50);

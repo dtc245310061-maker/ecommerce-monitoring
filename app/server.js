@@ -65,6 +65,24 @@ const defaultProducts = [
     description: "Chuột không dây gọn nhẹ",
     price: 250000,
     stock: 40
+  },
+  {
+    name: "Webcam Full HD",
+    description: "Webcam hình ảnh rõ nét cho học tập và họp trực tuyến",
+    price: 650000,
+    stock: 18
+  },
+  {
+    name: "Loa Bluetooth mini",
+    description: "Loa Bluetooth nhỏ gọn, âm thanh sống động",
+    price: 320000,
+    stock: 22
+  },
+  {
+    name: "Cáp sạc nhanh USB-C",
+    description: "Cáp sạc bền chắc hỗ trợ sạc nhanh",
+    price: 120000,
+    stock: 50
   }
 ];
 

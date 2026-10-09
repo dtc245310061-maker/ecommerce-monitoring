@@ -1,6 +1,6 @@
 # BÁO CÁO ĐỒ ÁN
 
-## Đề 9: Website thương mại điện tử (E-commerce)
+## Đề 9: Website thương mại điện tử
 
 **Sinh viên:** Phạm Thùy Dung  
 **Mã số sinh viên:** DTC245310061  
@@ -24,11 +24,11 @@ ghi MySQL, còn Prometheus/Grafana và Loki/Promtail theo dõi tình trạng h�
 
 Các kết quả chính:
 
-- Website hiển thị sản phẩm từ MySQL.
+- Website hiển thị sản phẩm từ MySQL và hỗ trợ tìm kiếm theo tên hoặc mô tả.
 - Giỏ hàng hoạt động ở trình duyệt bằng `localStorage`.
 - API đặt hàng tạo `orders` và `order_items` bằng transaction.
 - phpMyAdmin hỗ trợ xem dữ liệu MySQL.
-- Nginx cung cấp HTTPS tự ký và security headers.
+- Nginx cung cấp HTTPS tự ký và các header bảo mật.
 - Prometheus thu thập metrics ứng dụng, Nginx, MySQL và container.
 - Grafana hiển thị dashboard.
 - Loki và Promtail tập trung log Docker để truy vấn bằng LogQL.
@@ -39,8 +39,8 @@ Các kết quả chính:
 
 ## 2.1. Yêu cầu chức năng
 
-Website cần có danh sách sản phẩm, giá, mô tả và tồn kho. Người dùng có thể thêm
-sản phẩm vào giỏ hàng, thay đổi số lượng, xóa sản phẩm và xem tổng tiền. Form đặt
+Website cần có danh sách sản phẩm, thanh tìm kiếm theo tên hoặc mô tả, giá, mô tả
+và tồn kho. Người dùng có thể thêm sản phẩm vào giỏ hàng, thay đổi số lượng, xóa sản phẩm và xem tổng tiền. Form đặt
 hàng nhận họ tên, email, số điện thoại định dạng `+84` với đúng 9 chữ số phía sau
 và địa chỉ giao hàng. Sau khi gửi, hệ thống kiểm tra tồn
 kho và tạo đơn hàng ở trạng thái `pending`.
@@ -53,7 +53,7 @@ không thuộc phạm vi bản demo.
 - Toàn bộ source code và file cấu hình được quản lý bằng GitHub.
 - MySQL là database chính; phpMyAdmin là công cụ quản lý.
 - Nginx làm reverse proxy.
-- HTTPS tự ký và security headers cơ bản.
+- HTTPS tự ký và các header bảo mật cơ bản.
 - Prometheus và Grafana giám sát web server, ứng dụng, database và container.
 - Loki và Promtail thu thập log tập trung.
 - Container chạy với quyền tối thiểu, network được tách biệt và mật khẩu nằm trong
@@ -61,8 +61,8 @@ không thuộc phạm vi bản demo.
 
 ## 2.3. Phạm vi loại trừ
 
-Đây là hệ thống học tập chạy local. Chứng chỉ TLS tự ký, chưa có payment gateway,
-chưa có email xác nhận đơn hàng và chưa triển khai lên cloud production.
+Đây là hệ thống học tập chạy cục bộ. Chứng chỉ TLS tự ký, chưa có cổng thanh toán,
+chưa có email xác nhận đơn hàng và chưa triển khai lên môi trường thực tế.
 
 \newpage
 
@@ -71,7 +71,7 @@ chưa có email xác nhận đơn hàng và chưa triển khai lên cloud produc
 ## 3.1. Sơ đồ logic
 
 ```text
-Browser
+Trình duyệt
    |
    | HTTPS :443
    v
@@ -91,7 +91,7 @@ Promtail   -----> Loki <----- Docker container logs
 
 ## 3.2. Các network
 
-`frontend` kết nối Nginx với ứng dụng. `backend` được đánh dấu `internal`, chỉ
+Network `frontend` kết nối Nginx với ứng dụng. Network `backend` được đánh dấu `internal`, chỉ
 cho ứng dụng, MySQL và exporter truy cập luồng database. `monitoring` chứa
 Prometheus, Grafana, Loki, Promtail và các exporter. MySQL không publish port ra
 host.
@@ -138,7 +138,7 @@ Các endpoint:
 | Endpoint | Mục đích |
 |---|---|
 | `GET /health` | kiểm tra ứng dụng và MySQL |
-| `GET /api/status` | kiểm tra database name và server time |
+| `GET /api/status` | kiểm tra tên database và thời gian máy chủ |
 | `GET /api/products` | lấy sản phẩm |
 | `POST /api/orders` | tạo đơn hàng |
 | `GET /metrics` | metrics cho Prometheus |
@@ -186,7 +186,7 @@ tiếp port database ra máy host.
 Nginx lắng nghe port 80 và chuyển hướng toàn bộ request sang HTTPS port 443.
 Certificate tự ký được tạo trong image build cho hostname `localhost`.
 
-Các security headers đang bật:
+Các header bảo mật đang bật:
 
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: SAMEORIGIN`
@@ -211,8 +211,8 @@ curl.exe -k https://localhost/health
 Trình duyệt có thể cảnh báo chứng chỉ vì certificate không do CA công cộng cấp.
 Đây là hành vi dự kiến của môi trường học tập.
 
-**Hình minh họa cần chụp:** trình duyệt hiển thị website HTTPS và phần response
-headers trong Developer Tools.
+**Hình minh họa cần chụp:** trình duyệt hiển thị website HTTPS và phần header
+phản hồi trong công cụ dành cho nhà phát triển.
 
 \newpage
 
@@ -226,7 +226,7 @@ Prometheus scrape các target:
 - `mysqld-exporter:9104`
 - `cadvisor:8080`
 
-Ứng dụng dùng `prom-client` để xuất số request HTTP theo method, route và status.
+Ứng dụng dùng `prom-client` để xuất số request HTTP theo phương thức, route và trạng thái.
 Nginx exporter lấy số liệu từ `stub_status`. MySQL exporter đọc metrics database.
 cAdvisor cung cấp CPU và memory của container.
 
@@ -235,7 +235,7 @@ Grafana được provision tự động với hai datasource:
 - Prometheus: `http://prometheus:9090`
 - Loki: `http://loki:3100`
 
-Dashboard có các panel CPU container, memory container, request HTTP theo status
+Dashboard có các bảng CPU container, bộ nhớ container, request HTTP theo trạng thái
 và kết nối Nginx.
 
 Prometheus được truy cập qua Nginx tại:
@@ -261,7 +261,7 @@ Tất cả target quan trọng cần có `"health":"up"`.
 
 # 8. Loki, Promtail và LogQL
 
-Promtail đọc Docker container logs thông qua Docker socket ở chế độ read-only,
+Promtail đọc log container Docker thông qua Docker socket ở chế độ chỉ đọc,
 gắn nhãn `container`, `service` và `stream`, sau đó gửi log đến Loki.
 
 Các truy vấn LogQL dùng trong phần demo:
@@ -303,18 +303,18 @@ Các biện pháp đã áp dụng:
 - App chạy user `node`, không chạy root.
 - App và Nginx dùng `no-new-privileges`.
 - App và Nginx drop toàn bộ Linux capabilities không cần thiết.
-- Filesystem app/Nginx read-only, dùng `tmpfs` cho thư mục tạm.
+- Hệ thống file của app/Nginx ở chế độ chỉ đọc, dùng `tmpfs` cho thư mục tạm.
 - Database không publish port ra host.
 - Network backend được đánh dấu `internal`.
 - `.env` và certificate riêng không được commit.
 - Mật khẩu được lấy từ biến môi trường.
-- Nginx tắt server tokens và thêm security headers.
-- Monitoring endpoints không publish trực tiếp ra host.
-- Promtail mount Docker socket ở chế độ read-only.
+- Nginx tắt server tokens và thêm các header bảo mật.
+- Endpoint giám sát không mở trực tiếp ra host.
+- Promtail mount Docker socket ở chế độ chỉ đọc.
 
 Trade-off cần trình bày: Promtail cần Docker socket để discovery nên vẫn là quyền
-nhạy cảm. Trong production nên dùng secrets manager, certificate tin cậy, network
-policy chi tiết và logging agent có quyền tối thiểu hơn.
+nhạy cảm. Trong môi trường thực tế nên dùng công cụ quản lý secret, certificate
+tin cậy, network policy chi tiết và tác nhân ghi log có quyền tối thiểu hơn.
 
 Không dùng `--remove-orphans` trong lúc demo nếu chưa xác định container cũ có
 cần thiết hay không. Container cAdvisor hiện đã được khai báo chính thức trong
@@ -373,8 +373,8 @@ GitHub; chỉ `.env.example` được theo dõi để mô tả biến môi trư�
 Các mốc commit nên được giữ rõ ràng:
 
 1. Hạ tầng nền tảng: Compose, MySQL, phpMyAdmin, Nginx và HTTPS.
-2. Monitoring: Prometheus, Grafana, exporter và cAdvisor.
-3. Logging: Loki, Promtail và tài liệu LogQL.
+2. Giám sát: Prometheus, Grafana, exporter và cAdvisor.
+3. Ghi log: Loki, Promtail và tài liệu LogQL.
 4. Nghiệp vụ: sản phẩm, giỏ hàng và đặt hàng.
 
 Trước khi push:
@@ -396,7 +396,7 @@ database cục bộ.
 
 Đồ án đã đáp ứng kiến trúc chính của Đề 9: website thương mại điện tử chạy bằng
 Node.js/Express, MySQL và phpMyAdmin; Nginx reverse proxy có HTTPS tự ký và
-security headers; Prometheus/Grafana giám sát ứng dụng, web server, database và
+header bảo mật; Prometheus/Grafana giám sát ứng dụng, web server, database và
 container; Loki/Promtail tập trung log và hỗ trợ LogQL; Docker Compose giúp khởi
 động toàn bộ stack bằng một lệnh.
 
