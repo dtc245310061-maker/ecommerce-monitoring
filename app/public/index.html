@@ -1,0 +1,109 @@
+```javascript
+const express = require("express");
+const path = require("path");
+const mysql = require("mysql2/promise");
+const promClient = require("prom-client");
+
+const app = express();
+const port = Number(process.env.PORT || 3000);
+
+const register = new promClient.Registry();
+promClient.collectDefaultMetrics({ register });
+
+const httpRequests = new promClient.Counter({
+    name: "ecommerce_http_requests_total",
+    help: "Total HTTP requests handled by the ecommerce starter app",
+    labelNames: ["method", "route", "status"],
+    registers: [register]
+});
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+    const start = Date.now();
+
+    res.on("finish", () => {
+        httpRequests.inc({
+            method: req.method,
+            route: req.route?.path || req.path,
+            status: String(res.statusCode)
+        });
+
+        console.log(JSON.stringify({
+            level: "info",
+            method: req.method,
+            path: req.path,
+            status: res.statusCode,
+            duration_ms: Date.now() - start
+        }));
+    });
+
+    next();
+});
+
+// Hien thi giao dien trong thu muc public
+app.use(express.static(path.join(__dirname, "public")));
+
+// Ket noi MySQL
+const pool = mysql.createPool({
+    host: process.env.DB_HOST || "mysql",
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER || "ecommerce_app",
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || "ecommerce",
+    waitForConnections: true,
+    connectionLimit: 5
+});
+
+// Kiem tra trang thai ung dung va database
+app.get("/health", async (req, res) => {
+    try {
+        await pool.query("SELECT 1");
+
+        res.json({
+            status: "ok",
+            database: "connected"
+        });
+    } catch (err) {
+        res.status(503).json({
+            status: "error",
+            database: "disconnected"
+        });
+    }
+});
+
+// Cung cap metrics cho Prometheus
+app.get("/metrics", async (req, res) => {
+    res.set("Content-Type", register.contentType);
+    res.end(await register.metrics());
+});
+
+// Kiem tra ket noi MySQL
+app.get("/api/status", async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            "SELECT DATABASE() AS database_name, NOW() AS server_time"
+        );
+
+        res.json({
+            status: "ok",
+            database: rows[0].database_name,
+            serverTime: rows[0].server_time
+        });
+    } catch (err) {
+        res.status(503).json({
+            status: "error",
+            message: "Database is unavailable"
+        });
+    }
+});
+
+// Khoi dong server
+app.listen(port, "0.0.0.0", () => {
+    console.log(JSON.stringify({
+        level: "info",
+        message: "app_started",
+        port
+    }));
+});
+```

@@ -1,0 +1,15 @@
+{
+  "name": "ecommerce-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Starter app for ecommerce infrastructure project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "4.21.2",
+    "mysql2": "3.14.1",
+    "prom-client": "15.1.3"
+  }
+}

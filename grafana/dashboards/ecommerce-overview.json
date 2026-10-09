@@ -1,0 +1,19 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "panels": [
+    {"type":"timeseries","title":"Container CPU usage","gridPos":{"h":8,"w":12,"x":0,"y":0},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"rate(container_cpu_usage_seconds_total[5m])","legendFormat":"{{name}}","refId":"A"}]},
+    {"type":"timeseries","title":"Container memory","gridPos":{"h":8,"w":12,"x":12,"y":0},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"container_memory_working_set_bytes","legendFormat":"{{name}}","refId":"A"}]},
+    {"type":"timeseries","title":"Application HTTP requests","gridPos":{"h":8,"w":12,"x":0,"y":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"sum by (status) (rate(ecommerce_http_requests_total[5m]))","legendFormat":"HTTP {{status}}","refId":"A"}]},
+    {"type":"timeseries","title":"Nginx active connections","gridPos":{"h":8,"w":12,"x":12,"y":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"nginx_connections_active","legendFormat":"active","refId":"A"}]}
+  ],
+  "schemaVersion": 41,
+  "tags": ["ecommerce","docker","monitoring"],
+  "templating": {"list":[{"name":"DS_PROMETHEUS","type":"datasource","query":"prometheus","current":{"text":"Prometheus","value":"Prometheus"}}]},
+  "time": {"from":"now-1h","to":"now"},
+  "title":"E-commerce Infrastructure Overview",
+  "uid":"ecommerce-overview",
+  "version": 1
+}
