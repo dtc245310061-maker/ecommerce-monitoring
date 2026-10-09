@@ -199,6 +199,7 @@ Nginx proxy các đường dẫn:
 - `/` đến ứng dụng Node.js.
 - `/phpmyadmin/` đến phpMyAdmin.
 - `/grafana/` đến Grafana.
+- `/prometheus/` đến Prometheus.
 
 Để kiểm tra:
 
@@ -236,6 +237,15 @@ Grafana được provision tự động với hai datasource:
 
 Dashboard có các panel CPU container, memory container, request HTTP theo status
 và kết nối Nginx.
+
+Prometheus được truy cập qua Nginx tại:
+
+```text
+https://localhost/prometheus/
+```
+
+Port 9090 không publish trực tiếp ra host; đường dẫn HTTPS này vừa đáp ứng nhu
+cầu demo, vừa giữ Prometheus trong mạng Docker.
 
 Kiểm tra target bằng Prometheus API:
 

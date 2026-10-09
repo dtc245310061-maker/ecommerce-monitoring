@@ -692,11 +692,11 @@
                     <div class="form-field">
                         <label for="customer-phone">Số điện thoại</label>
                         <input id="customer-phone" name="customerPhone" type="tel"
-                            inputmode="tel" autocomplete="tel" maxlength="20"
-                            placeholder="Ví dụ: +84912345678"
+                            inputmode="numeric" autocomplete="tel" value="+84" maxlength="20"
+                            placeholder="+84"
                             aria-describedby="customer-phone-hint" required>
                         <p id="customer-phone-hint" class="form-hint">
-                            Nhập +84 và đúng 9 số phía sau, ví dụ +84912345678.
+                            Mã +84 đã được điền sẵn. Bạn chỉ cần nhập 9 số còn lại, ví dụ 912345678.
                         </p>
                     </div>
                     <div class="form-field">
@@ -745,6 +745,7 @@
         const checkoutForm = document.querySelector("#checkout-form");
         const checkoutMessage = document.querySelector("#checkout-message");
         const checkoutSummary = document.querySelector("#checkout-summary");
+        const customerPhoneInput = document.querySelector("#customer-phone");
         const currencyFormatter = new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND"
@@ -971,6 +972,24 @@
 
             return "";
         }
+
+        function keepVietnamPhonePrefix() {
+            const rawValue = customerPhoneInput.value.trim();
+            let subscriberNumber = rawValue.startsWith("+84")
+                ? rawValue.slice(3).replace(/\D/g, "")
+                : rawValue.replace(/\D/g, "").replace(/^84/, "").replace(/^0/, "");
+
+            customerPhoneInput.value = `+84${subscriberNumber}`;
+        }
+
+        customerPhoneInput.addEventListener("input", keepVietnamPhonePrefix);
+        customerPhoneInput.addEventListener("focus", () => {
+            keepVietnamPhonePrefix();
+            customerPhoneInput.setSelectionRange(
+                customerPhoneInput.value.length,
+                customerPhoneInput.value.length
+            );
+        });
 
         checkoutForm.addEventListener("submit", async (event) => {
             event.preventDefault();

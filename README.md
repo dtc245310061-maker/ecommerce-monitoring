@@ -20,7 +20,8 @@ Grafana, Loki, Promtail và các exporter.
 - Website: https://localhost (self-signed certificate; browser warning is expected)
 - phpMyAdmin: https://localhost/phpmyadmin/
 - Grafana: https://localhost/grafana/
-- Prometheus: internal-only, reachable from Grafana/network or with a temporary local port-forward for troubleshooting
+- Prometheus: https://localhost/prometheus/ (qua Nginx reverse proxy; port 9090
+  không publish trực tiếp ra host)
 - Loki: internal-only
 
 Grafana login uses `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` in `.env`. MySQL root and app credentials are in `.env`. Do not commit `.env`, private keys, or production secrets.
@@ -49,6 +50,7 @@ curl.exe -k -X POST https://localhost/api/orders -H "Content-Type: application/j
 - `docker compose logs --tail=100 mysql app nginx prometheus grafana loki promtail`
 - Open `https://localhost/health`
 - Open `https://localhost/api/status`
+- Open `https://localhost/prometheus/` and kiểm tra trang Prometheus.
 - In Prometheus, confirm scrape targets become `UP`.
 - In Grafana, confirm Prometheus and Loki datasources.
 - In Grafana Explore, select Loki and try:
