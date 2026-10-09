@@ -7,7 +7,8 @@
     {"type":"timeseries","title":"Container CPU usage","gridPos":{"h":8,"w":12,"x":0,"y":0},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"rate(container_cpu_usage_seconds_total[5m])","legendFormat":"{{name}}","refId":"A"}]},
     {"type":"timeseries","title":"Container memory","gridPos":{"h":8,"w":12,"x":12,"y":0},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"container_memory_working_set_bytes","legendFormat":"{{name}}","refId":"A"}]},
     {"type":"timeseries","title":"Application HTTP requests","gridPos":{"h":8,"w":12,"x":0,"y":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"sum by (status) (rate(ecommerce_http_requests_total[5m]))","legendFormat":"HTTP {{status}}","refId":"A"}]},
-    {"type":"timeseries","title":"Nginx active connections","gridPos":{"h":8,"w":12,"x":12,"y":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"nginx_connections_active","legendFormat":"active","refId":"A"}]}
+    {"type":"timeseries","title":"Nginx active connections","gridPos":{"h":8,"w":12,"x":12,"y":8},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"nginx_connections_active","legendFormat":"active","refId":"A"}]},
+    {"type":"timeseries","title":"MySQL availability","gridPos":{"h":8,"w":12,"x":0,"y":16},"datasource":{"type":"prometheus","uid":"prometheus"},"targets":[{"expr":"mysql_up","legendFormat":"MySQL up","refId":"A"},{"expr":"mysql_global_status_threads_connected","legendFormat":"Connected threads","refId":"B"}]}
   ],
   "schemaVersion": 41,
   "tags": ["ecommerce","docker","monitoring"],

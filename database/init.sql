@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS orders (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   customer_name VARCHAR(150) NOT NULL,
   customer_email VARCHAR(254) NOT NULL,
+  customer_phone VARCHAR(20) NOT NULL,
   shipping_address VARCHAR(500) NOT NULL,
   status ENUM('pending','confirmed','shipping','completed','cancelled') NOT NULL DEFAULT 'pending',
   total_amount DECIMAL(12,2) NOT NULL DEFAULT 0,

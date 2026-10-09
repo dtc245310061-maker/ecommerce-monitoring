@@ -33,12 +33,14 @@ Grafana login uses `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` in `.env`. 
 - `POST /api/orders`: kiểm tra dữ liệu, khóa tồn kho bằng transaction, tạo `orders`
   và `order_items`, sau đó trừ tồn kho.
 - Trang chủ hỗ trợ thêm, sửa, xóa giỏ hàng bằng `localStorage`.
-- Form đặt hàng cơ bản tạo đơn ở trạng thái `pending`; chưa tích hợp thanh toán.
+- Form đặt hàng cơ bản yêu cầu họ tên, email, số điện thoại định dạng `+84` với
+  đúng 9 chữ số phía sau và địa chỉ; đơn ở trạng thái `pending`, chưa tích hợp
+  thanh toán.
 
 Ví dụ tạo đơn hàng:
 
 ```powershell
-$body = '{"customerName":"Pham Thuy Dung","customerEmail":"dung@example.com","shippingAddress":"Ha Noi, Viet Nam","items":[{"productId":1,"quantity":1}]}'
+$body = '{"customerName":"Pham Thuy Dung","customerEmail":"dung@example.com","customerPhone":"+84912345678","shippingAddress":"Ha Noi, Viet Nam","items":[{"productId":1,"quantity":1}]}'
 curl.exe -k -X POST https://localhost/api/orders -H "Content-Type: application/json" -d $body
 ```
 
@@ -68,7 +70,7 @@ Prometheus targets cần ở trạng thái `UP`:
 - `prometheus`
 
 Dashboard Grafana `E-commerce Infrastructure Overview` hiển thị CPU, memory container,
-request HTTP và kết nối Nginx.
+request HTTP, kết nối Nginx và trạng thái MySQL/số connection database.
 
 ## Lịch sử commit đề xuất cho báo cáo
 

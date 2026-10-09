@@ -8,13 +8,16 @@
     <title>Tech Việt - Cửa hàng công nghệ</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
-            --text: #172033;
-            --muted: #64748b;
+            --primary: #1d4ed8;
+            --primary-dark: #1e3a8a;
+            --accent: #d89b16;
+            --text: #111827;
+            --muted: #6b7280;
             --surface: #ffffff;
-            --background: #f8fafc;
-            --border: #e2e8f0;
+            --background: #f7f7f5;
+            --border: #d1d5db;
+            --cream: #f5efe3;
+            --shadow: 0 12px 30px rgba(17, 24, 39, 0.1);
         }
 
         * {
@@ -29,7 +32,7 @@
             margin: 0;
             background: var(--background);
             color: var(--text);
-            font-family: Arial, sans-serif;
+            font-family: "Segoe UI", Arial, sans-serif;
             line-height: 1.6;
         }
 
@@ -45,7 +48,10 @@
 
         .site-header {
             background: var(--surface);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid rgba(209, 213, 219, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .header-content {
@@ -57,8 +63,13 @@
 
         .logo {
             color: var(--primary);
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .logo span {
+            color: var(--accent);
         }
 
         .nav-toggle {
@@ -80,6 +91,7 @@
         .main-nav a {
             color: var(--muted);
             font-weight: 600;
+            transition: color 160ms ease;
         }
 
         .main-nav a:hover,
@@ -88,15 +100,22 @@
         }
 
         .cart-link {
-            border: 1px solid var(--primary);
-            border-radius: 8px;
-            color: var(--primary) !important;
-            padding: 8px 14px;
+            background: var(--primary);
+            border-radius: 999px;
+            color: #fff !important;
+            padding: 9px 16px;
+        }
+
+        .cart-link:hover,
+        .cart-link:focus {
+            background: var(--primary-dark);
         }
 
         .hero {
-            background: linear-gradient(135deg, #dbeafe, #eff6ff);
-            padding: 72px 0;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(216, 155, 22, 0.22), transparent 28%),
+                linear-gradient(135deg, #dbeafe, #eff6ff 60%, var(--cream));
+            padding: 86px 0;
         }
 
         .hero-content {
@@ -107,7 +126,7 @@
         }
 
         .eyebrow {
-            color: var(--primary-dark);
+            color: var(--primary);
             font-size: 0.85rem;
             font-weight: 700;
             letter-spacing: 0.08em;
@@ -122,6 +141,7 @@
 
         h1 {
             font-size: clamp(2.2rem, 5vw, 4rem);
+            letter-spacing: -0.05em;
             margin: 12px 0 20px;
         }
 
@@ -141,24 +161,31 @@
             font-weight: 700;
             margin-top: 16px;
             padding: 12px 20px;
+            transition: background 160ms ease, transform 160ms ease;
         }
 
         .button:hover,
         .button:focus {
             background: var(--primary-dark);
+            transform: translateY(-1px);
         }
 
         .hero-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 16px;
-            box-shadow: 0 12px 30px rgba(37, 99, 235, 0.12);
+            box-shadow: var(--shadow);
             padding: 28px;
             text-align: center;
         }
 
         .hero-icon {
             font-size: 5rem;
+        }
+
+        .hero-card p,
+        .hero-card h2 {
+            margin-bottom: 0;
         }
 
         .section {
@@ -191,7 +218,14 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(17, 24, 39, 0.06);
             padding: 24px;
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        .feature-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-3px);
         }
 
         .feature-card h3 {
@@ -203,7 +237,7 @@
         }
 
         .products-section {
-            background: #eef4ff;
+            background: var(--cream);
         }
 
         .product-grid {
@@ -218,7 +252,25 @@
             border-radius: 12px;
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            min-height: 330px;
+            overflow: hidden;
+            padding: 0 24px 24px;
+            transition: box-shadow 160ms ease, transform 160ms ease;
+        }
+
+        .product-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .product-visual {
+            align-items: center;
+            background: linear-gradient(135deg, #dbeafe, #fef3c7);
+            display: flex;
+            font-size: 3rem;
+            height: 120px;
+            justify-content: center;
+            margin: 0 -24px 20px;
         }
 
         .product-card h3 {
@@ -251,7 +303,7 @@
         }
 
         .product-card .button:disabled {
-            background: #94a3b8;
+            background: #9ca3af;
             cursor: not-allowed;
         }
 
@@ -262,7 +314,7 @@
         }
 
         .products-message.error {
-            color: #b91c1c;
+            color: #b42318;
         }
 
         .cart-section {
@@ -342,7 +394,7 @@
         }
 
         .remove-button {
-            color: #b91c1c;
+            color: #b42318;
             font-size: 0.85rem;
             padding: 6px 10px;
             width: auto;
@@ -356,7 +408,7 @@
         }
 
         .cart-notice {
-            color: #b45309;
+            color: #a16207;
             margin-top: 12px;
         }
 
@@ -374,7 +426,7 @@
         }
 
         .checkout-section {
-            background: #eef4ff;
+            background: var(--cream);
         }
 
         .checkout-form {
@@ -386,6 +438,7 @@
             margin: 0 auto;
             max-width: 800px;
             padding: 24px;
+            box-shadow: var(--shadow);
         }
 
         .form-field {
@@ -411,6 +464,23 @@
             resize: vertical;
         }
 
+        .form-hint {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .checkout-summary {
+            background: #eff6ff;
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+
+        .checkout-summary strong {
+            color: var(--primary-dark);
+        }
+
         .form-field input:focus,
         .form-field textarea:focus {
             border-color: var(--primary);
@@ -427,12 +497,12 @@
         }
 
         .checkout-message.error {
-            color: #b91c1c;
+            color: #b42318;
         }
 
         .site-footer {
-            background: #172033;
-            color: #cbd5e1;
+            background: #111827;
+            color: #d1d5db;
             padding: 28px 0;
         }
 
@@ -460,6 +530,7 @@
             .main-nav {
                 background: var(--surface);
                 border-bottom: 1px solid var(--border);
+                box-shadow: var(--shadow);
                 display: none;
                 flex-direction: column;
                 gap: 16px;
@@ -498,6 +569,14 @@
                 padding: 52px 0;
             }
 
+            .hero-card {
+                padding: 22px;
+            }
+
+            .section {
+                padding: 48px 0;
+            }
+
             .footer-content {
                 align-items: flex-start;
                 flex-direction: column;
@@ -509,7 +588,7 @@
 <body>
     <header class="site-header">
         <div class="container header-content">
-            <a class="logo" href="/" aria-label="Tech Việt - Trang chủ">Tech Việt</a>
+            <a class="logo" href="/" aria-label="Tech Việt - Trang chủ">Tech <span>Việt</span></a>
             <button class="nav-toggle" type="button" aria-controls="main-nav" aria-expanded="false">
                 ☰ <span class="visually-hidden">Mở menu</span>
             </button>
@@ -601,7 +680,7 @@
                     <h2>Đặt hàng</h2>
                     <p>Điền thông tin để tạo đơn hàng. Chưa tích hợp thanh toán trực tuyến.</p>
                 </div>
-                <form id="checkout-form" class="checkout-form">
+                <form id="checkout-form" class="checkout-form" novalidate>
                     <div class="form-field">
                         <label for="customer-name">Họ và tên</label>
                         <input id="customer-name" name="customerName" type="text" minlength="2" maxlength="150" required>
@@ -611,8 +690,22 @@
                         <input id="customer-email" name="customerEmail" type="email" maxlength="254" required>
                     </div>
                     <div class="form-field">
+                        <label for="customer-phone">Số điện thoại</label>
+                        <input id="customer-phone" name="customerPhone" type="tel"
+                            inputmode="tel" autocomplete="tel" maxlength="20"
+                            placeholder="Ví dụ: +84912345678"
+                            aria-describedby="customer-phone-hint" required>
+                        <p id="customer-phone-hint" class="form-hint">
+                            Nhập +84 và đúng 9 số phía sau, ví dụ +84912345678.
+                        </p>
+                    </div>
+                    <div class="form-field">
                         <label for="shipping-address">Địa chỉ giao hàng</label>
                         <textarea id="shipping-address" name="shippingAddress" minlength="5" maxlength="500" required></textarea>
+                    </div>
+                    <div class="checkout-summary">
+                        <strong>Tóm tắt đơn hàng</strong>
+                        <p id="checkout-summary">Chưa có sản phẩm trong giỏ hàng.</p>
                     </div>
                     <button class="button" type="submit">Xác nhận đặt hàng</button>
                     <p id="checkout-message" class="checkout-message" role="status"></p>
@@ -651,6 +744,7 @@
         const cartTotal = document.querySelector("#cart-total");
         const checkoutForm = document.querySelector("#checkout-form");
         const checkoutMessage = document.querySelector("#checkout-message");
+        const checkoutSummary = document.querySelector("#checkout-summary");
         const currencyFormatter = new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND"
@@ -661,6 +755,15 @@
         function createProductCard(product) {
             const card = document.createElement("article");
             card.className = "product-card";
+
+            const visual = document.createElement("div");
+            visual.className = "product-visual";
+            visual.setAttribute("aria-hidden", "true");
+            visual.textContent = product.name.toLowerCase().includes("tai nghe")
+                ? "🎧"
+                : product.name.toLowerCase().includes("bàn phím")
+                    ? "⌨️"
+                    : "🖱️";
 
             const name = document.createElement("h3");
             name.textContent = product.name;
@@ -684,7 +787,7 @@
             addButton.textContent = product.stock > 0 ? "Thêm vào giỏ" : "Hết hàng";
             addButton.disabled = product.stock <= 0;
 
-            card.append(name, description, price, stock, addButton);
+            card.append(visual, name, description, price, stock, addButton);
             return card;
         }
 
@@ -780,6 +883,9 @@
             });
 
             cartTotal.textContent = currencyFormatter.format(total);
+            checkoutSummary.textContent = cart.length === 0
+                ? "Chưa có sản phẩm trong giỏ hàng."
+                : `${getCartQuantity()} sản phẩm - Tổng cộng ${currencyFormatter.format(total)}`;
             updateCartLink();
         }
 
@@ -840,6 +946,32 @@
             checkoutMessage.textContent = message;
         }
 
+        function getPhoneError(value) {
+            const phone = typeof value === "string" ? value.trim() : "";
+            if (!phone) {
+                return "Vui lòng nhập số điện thoại theo định dạng +84xxxxxxxxx.";
+            }
+            if (!phone.startsWith("+84")) {
+                return "Số điện thoại phải bắt đầu bằng +84.";
+            }
+
+            const subscriberNumber = phone.slice(3);
+            if (subscriberNumber.length < 9) {
+                return "Vui lòng nhập đủ 9 số sau mã +84.";
+            }
+            if (subscriberNumber.length > 9) {
+                return "Số điện thoại chỉ được có 9 số sau mã +84.";
+            }
+            if (!/^\d+$/.test(subscriberNumber)) {
+                return "Số điện thoại chỉ được chứa chữ số sau mã +84.";
+            }
+            if (!/^[35789]/.test(subscriberNumber)) {
+                return "Vui lòng nhập số điện thoại di động Việt Nam hợp lệ.";
+            }
+
+            return "";
+        }
+
         checkoutForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
@@ -849,6 +981,13 @@
             }
 
             const formData = new FormData(checkoutForm);
+            const phoneError = getPhoneError(formData.get("customerPhone"));
+            if (phoneError) {
+                setCheckoutMessage(phoneError, "error");
+                document.querySelector("#customer-phone").focus();
+                return;
+            }
+
             const submitButton = checkoutForm.querySelector("button[type='submit']");
             submitButton.disabled = true;
             setCheckoutMessage("Đang tạo đơn hàng...");
@@ -862,6 +1001,7 @@
                     body: JSON.stringify({
                         customerName: formData.get("customerName"),
                         customerEmail: formData.get("customerEmail"),
+                        customerPhone: formData.get("customerPhone"),
                         shippingAddress: formData.get("shippingAddress"),
                         items: cart.map((item) => ({
                             productId: item.id,

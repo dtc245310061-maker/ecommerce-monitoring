@@ -41,7 +41,8 @@ Các kết quả chính:
 
 Website cần có danh sách sản phẩm, giá, mô tả và tồn kho. Người dùng có thể thêm
 sản phẩm vào giỏ hàng, thay đổi số lượng, xóa sản phẩm và xem tổng tiền. Form đặt
-hàng nhận họ tên, email và địa chỉ giao hàng. Sau khi gửi, hệ thống kiểm tra tồn
+hàng nhận họ tên, email, số điện thoại định dạng `+84` với đúng 9 chữ số phía sau
+và địa chỉ giao hàng. Sau khi gửi, hệ thống kiểm tra tồn
 kho và tạo đơn hàng ở trạng thái `pending`.
 
 Phần thanh toán trực tuyến, tài khoản người dùng và quản trị đơn hàng nâng cao

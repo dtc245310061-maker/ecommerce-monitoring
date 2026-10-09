@@ -68,6 +68,19 @@ const defaultProducts = [
   }
 ];
 
+async function ensureOrderPhoneColumn() {
+  const [columns] = await pool.query(
+    "SELECT COUNT(*) AS column_count FROM INFORMATION_SCHEMA.COLUMNS " +
+    "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'orders' AND COLUMN_NAME = 'customer_phone'"
+  );
+
+  if (Number(columns[0].column_count) === 0) {
+    await pool.query(
+      "ALTER TABLE orders ADD COLUMN customer_phone VARCHAR(20) NOT NULL DEFAULT '' AFTER customer_email"
+    );
+  }
+}
+
 async function ensureDefaultProducts() {
   for (const product of defaultProducts) {
     await pool.execute(
@@ -85,6 +98,33 @@ async function ensureDefaultProducts() {
       ]
     );
   }
+}
+
+function getCustomerPhoneError(value) {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return "Vui lòng nhập số điện thoại theo định dạng +84xxxxxxxxx.";
+  }
+
+  const phone = value.trim();
+  if (!phone.startsWith("+84")) {
+    return "Số điện thoại phải bắt đầu bằng +84.";
+  }
+
+  const subscriberNumber = phone.slice(3);
+  if (subscriberNumber.length < 9) {
+    return "Vui lòng nhập đủ 9 số sau mã +84.";
+  }
+  if (subscriberNumber.length > 9) {
+    return "Số điện thoại chỉ được có 9 số sau mã +84.";
+  }
+  if (!/^\d+$/.test(subscriberNumber)) {
+    return "Số điện thoại chỉ được chứa chữ số sau mã +84.";
+  }
+  if (!/^[35789]/.test(subscriberNumber)) {
+    return "Vui lòng nhập số điện thoại di động Việt Nam hợp lệ.";
+  }
+
+  return null;
 }
 
 app.get("/api/products", async (req, res) => {
@@ -105,7 +145,12 @@ app.get("/api/products", async (req, res) => {
 });
 
 app.post("/api/orders", async (req, res) => {
-  const { customerName, customerEmail, shippingAddress, items } = req.body;
+  const { customerName, customerEmail, customerPhone, shippingAddress, items } = req.body;
+  const customerPhoneError = getCustomerPhoneError(customerPhone);
+
+  if (customerPhoneError) {
+    return res.status(400).json({ error: customerPhoneError });
+  }
 
   if (
     typeof customerName !== "string" ||
@@ -182,11 +227,12 @@ app.post("/api/orders", async (req, res) => {
 
     const [orderResult] = await connection.execute(
       `INSERT INTO orders
-        (customer_name, customer_email, shipping_address, total_amount)
-       VALUES (?, ?, ?, ?)`,
+        (customer_name, customer_email, customer_phone, shipping_address, total_amount)
+       VALUES (?, ?, ?, ?, ?)`,
       [
         customerName.trim(),
         customerEmail.trim(),
+        customerPhone.trim(),
         shippingAddress.trim(),
         totalAmount.toFixed(2)
       ]
@@ -251,7 +297,8 @@ app.get("/api/status", async (req, res) => {
   }
 });
 
-ensureDefaultProducts()
+ensureOrderPhoneColumn()
+  .then(() => ensureDefaultProducts())
   .then(() => {
     app.listen(port, "0.0.0.0", () => console.log(JSON.stringify({
       level: "info",
