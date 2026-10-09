@@ -45,8 +45,9 @@ hàng nhận họ tên, email, số điện thoại định dạng `+84` với �
 và địa chỉ giao hàng. Sau khi gửi, hệ thống kiểm tra tồn
 kho và tạo đơn hàng ở trạng thái `pending`.
 
-Phần thanh toán trực tuyến, tài khoản người dùng và quản trị đơn hàng nâng cao
-không thuộc phạm vi bản demo.
+Phần thanh toán trực tuyến và tài khoản khách hàng không thuộc phạm vi bản demo.
+Sau khi đặt hàng, khách có thể tra cứu đơn bằng mã đơn kết hợp với số điện thoại.
+Việc này giúp demo có quy trình sau bán hàng nhưng không cần lưu phiên đăng nhập.
 
 ## 2.2. Yêu cầu hạ tầng
 
@@ -101,7 +102,8 @@ host.
 Request HTTP port 80 được chuyển hướng sang HTTPS. Request HTTPS đi vào Nginx,
 sau đó Nginx chuyển đến `app:3000`. Static HTML được Express phục vụ từ thư mục
 `app/public`. Request `/api/products` đọc MySQL; request `/api/orders` thực hiện
-transaction tạo đơn hàng.
+transaction tạo đơn hàng. Request tra cứu đơn kiểm tra đồng thời mã đơn và số điện
+thoại trước khi trả về trạng thái cùng các sản phẩm trong đơn.
 
 **Hình minh họa cần chụp:** Docker Desktop hiển thị danh sách container đang chạy
 và sơ đồ network trong phần Docker Inspect.
@@ -141,6 +143,7 @@ Các endpoint:
 | `GET /api/status` | kiểm tra tên database và thời gian máy chủ |
 | `GET /api/products` | lấy sản phẩm |
 | `POST /api/orders` | tạo đơn hàng |
+| `GET /api/orders/:orderId?phone=...` | tra cứu đơn hàng và trạng thái |
 | `GET /metrics` | metrics cho Prometheus |
 
 **Hình minh họa cần chụp:** cây thư mục dự án trong VS Code.
@@ -339,14 +342,16 @@ curl.exe -k https://localhost/metrics
 Kiểm thử đặt hàng:
 
 ```powershell
-$body = '{"customerName":"Pham Thuy Dung","customerEmail":"dung@example.com","shippingAddress":"Ha Noi, Viet Nam","items":[{"productId":1,"quantity":1}]}'
+$body = '{"customerName":"Pham Thuy Dung","customerEmail":"dung@example.com","customerPhone":"+84912345678","shippingAddress":"Ha Noi, Viet Nam","items":[{"productId":1,"quantity":1}]}'
 curl.exe -k -X POST https://localhost/api/orders `
   -H "Content-Type: application/json" -d $body
 ```
 
-Kết quả mong đợi là HTTP 201, có `orderId`, `totalAmount` và `status=pending`.
-Request dữ liệu không hợp lệ phải trả HTTP 400. Request vượt tồn kho phải trả HTTP
-409. Sau khi tạo đơn, stock trong MySQL giảm đúng số lượng.
+Kết quả kiểm thử thực tế: request hợp lệ trả HTTP 201, có `orderId`,
+`totalAmount` và `status=pending`; request thiếu hoặc sai số điện thoại trả HTTP
+400; request vượt tồn kho trả HTTP 409. Sau khi tạo đơn, stock trong MySQL giảm
+đúng số lượng. API tra cứu với đúng mã đơn và số điện thoại trả HTTP 200; nếu
+đổi số điện thoại, API trả HTTP 400 hoặc 404 và không trả dữ liệu đơn hàng.
 
 Checklist giao diện:
 
@@ -356,6 +361,7 @@ Checklist giao diện:
 - Tải lại trang không mất giỏ hàng.
 - Điền form đặt hàng.
 - Nhận mã đơn hàng thành công.
+- Nhập mã đơn và số điện thoại để xem trạng thái, sản phẩm và tổng tiền.
 
 \newpage
 

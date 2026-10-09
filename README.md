@@ -35,11 +35,14 @@ Grafana, Loki, Promtail và các exporter.
   sản phẩm hiện có không bị ghi đè.
 - `POST /api/orders`: kiểm tra dữ liệu, khóa tồn kho bằng transaction, tạo `orders`
   và `order_items`, sau đó trừ tồn kho.
+- `GET /api/orders/:orderId?phone=+84xxxxxxxxx`: tra cứu trạng thái đơn hàng
+  bằng mã đơn và số điện thoại.
 - Trang chủ hỗ trợ thêm, sửa, xóa giỏ hàng bằng `localStorage`.
 - Có thanh tìm kiếm sản phẩm theo tên hoặc mô tả.
 - Form đặt hàng cơ bản yêu cầu họ tên, email, số điện thoại định dạng `+84` với
   đúng 9 chữ số phía sau và địa chỉ; đơn ở trạng thái `pending`, chưa tích hợp
   thanh toán.
+- Có thể tra cứu đơn hàng bằng mã đơn và số điện thoại đã dùng khi đặt hàng.
 
 Ví dụ tạo đơn hàng:
 

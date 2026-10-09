@@ -292,6 +292,71 @@ app.post("/api/orders", async (req, res) => {
   }
 });
 
+app.get("/api/orders/:orderId", async (req, res) => {
+  const orderId = Number(req.params.orderId);
+  const customerPhone = typeof req.query.phone === "string"
+    ? req.query.phone.trim()
+    : "";
+  const customerPhoneError = getCustomerPhoneError(customerPhone);
+
+  if (!Number.isSafeInteger(orderId) || orderId <= 0 || customerPhoneError) {
+    return res.status(400).json({
+      error: customerPhoneError || "Mã đơn hàng không hợp lệ"
+    });
+  }
+
+  try {
+    const [orders] = await pool.execute(
+      `SELECT id, customer_name, customer_phone, shipping_address,
+              status, total_amount, created_at
+       FROM orders
+       WHERE id = ? AND customer_phone = ?`,
+      [orderId, customerPhone]
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({
+        error: "Không tìm thấy đơn hàng với mã đơn và số điện thoại này"
+      });
+    }
+
+    const [items] = await pool.execute(
+      `SELECT oi.product_id, p.name, oi.quantity, oi.unit_price
+       FROM order_items oi
+       INNER JOIN products p ON p.id = oi.product_id
+       WHERE oi.order_id = ?
+       ORDER BY oi.id`,
+      [orderId]
+    );
+
+    const order = orders[0];
+    return res.json({
+      order: {
+        id: order.id,
+        customerName: order.customer_name,
+        customerPhone: order.customer_phone,
+        shippingAddress: order.shipping_address,
+        status: order.status,
+        totalAmount: Number(order.total_amount),
+        createdAt: order.created_at,
+        items: items.map((item) => ({
+          productId: item.product_id,
+          name: item.name,
+          quantity: item.quantity,
+          unitPrice: Number(item.unit_price)
+        }))
+      }
+    });
+  } catch (err) {
+    console.error(JSON.stringify({
+      level: "error",
+      message: "order_lookup_failed",
+      error: err.message
+    }));
+    return res.status(500).json({ error: "Không thể tra cứu đơn hàng" });
+  }
+});
+
 app.get("/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");

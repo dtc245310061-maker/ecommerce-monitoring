@@ -288,6 +288,28 @@
             height: 120px;
             justify-content: center;
             margin: 0 -24px 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image {
+            height: 100%;
+            object-fit: cover;
+            transition: transform 220ms ease;
+            width: 100%;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-image-fallback {
+            align-items: center;
+            display: flex;
+            font-size: 3rem;
+            height: 100%;
+            justify-content: center;
+            width: 100%;
         }
 
         .product-card h3 {
@@ -539,6 +561,255 @@
             color: #fff;
         }
 
+        /* Visual refinements for a clearer storefront layout. */
+        body {
+            background: #f3f6fb;
+            color: #172033;
+        }
+
+        .site-header {
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .header-content {
+            min-height: 78px;
+        }
+
+        .logo {
+            font-size: 1.55rem;
+        }
+
+        .main-nav {
+            gap: 10px;
+        }
+
+        .main-nav a {
+            border-radius: 999px;
+            padding: 10px 14px;
+        }
+
+        .main-nav a:hover,
+        .main-nav a:focus {
+            background: #eff6ff;
+        }
+
+        .cart-link,
+        .cart-link:hover,
+        .cart-link:focus {
+            background: var(--primary);
+            box-shadow: 0 8px 18px rgba(29, 78, 216, 0.22);
+            color: #fff !important;
+        }
+
+        .hero {
+            background:
+                radial-gradient(circle at 85% 15%, rgba(250, 204, 21, 0.3), transparent 22%),
+                linear-gradient(135deg, #172554 0%, #1d4ed8 58%, #60a5fa 100%);
+            color: #fff;
+            overflow: hidden;
+            padding: 92px 0 100px;
+        }
+
+        .hero-content {
+            gap: 64px;
+        }
+
+        .eyebrow {
+            color: #fde68a;
+        }
+
+        .hero h1 {
+            max-width: 680px;
+        }
+
+        .hero p {
+            color: #dbeafe;
+        }
+
+        .hero .button {
+            background: #facc15;
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.2);
+            color: #172033;
+        }
+
+        .hero .button:hover,
+        .hero .button:focus {
+            background: #fde047;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 0;
+            box-shadow: 0 20px 44px rgba(15, 23, 42, 0.22);
+            padding: 34px;
+        }
+
+        .hero-card h2 {
+            color: var(--text);
+        }
+
+        .hero-card p {
+            color: var(--muted);
+        }
+
+        .section {
+            padding: 82px 0;
+        }
+
+        .section-heading {
+            margin-bottom: 34px;
+        }
+
+        .section-heading h2 {
+            color: #111827;
+            font-size: clamp(1.75rem, 3vw, 2.35rem);
+        }
+
+        .products-section {
+            background: #eef4ff;
+        }
+
+        .product-search {
+            border: 2px solid #dbe4f0;
+            border-radius: 999px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+            padding: 15px 22px;
+        }
+
+        .product-search:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12);
+            outline: 0;
+        }
+
+        .product-card {
+            border: 0;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            min-height: 360px;
+            padding: 0 26px 26px;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 18px 34px rgba(15, 23, 42, 0.14);
+            transform: translateY(-6px);
+        }
+
+        .product-visual {
+            background: linear-gradient(135deg, #dbeafe 0%, #fff7d6 100%);
+            height: 140px;
+            margin: 0 -26px 24px;
+        }
+
+        .product-image {
+            object-fit: contain;
+            padding: 12px;
+        }
+
+        .product-card h3 {
+            color: #111827;
+            font-size: 1.1rem;
+        }
+
+        .product-price {
+            color: var(--primary-dark);
+            font-size: 1.35rem;
+        }
+
+        .product-card .button,
+        .checkout-form .button {
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(29, 78, 216, 0.16);
+        }
+
+        .feature-card {
+            border: 0;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+            padding: 28px;
+        }
+
+        .feature-icon {
+            align-items: center;
+            background: #eff6ff;
+            border-radius: 14px;
+            display: flex;
+            height: 52px;
+            justify-content: center;
+            width: 52px;
+        }
+
+        .cart-content {
+            max-width: 900px;
+        }
+
+        .cart-item {
+            background: #fff;
+            border: 0;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+            padding: 18px 20px;
+        }
+
+        .quantity-button {
+            border-radius: 9px;
+        }
+
+        .cart-summary {
+            border-top: 0;
+            margin-top: 18px;
+            padding: 20px 24px;
+        }
+
+        .cart-total {
+            color: var(--primary-dark);
+        }
+
+        .checkout-section {
+            background: #fffaf0;
+        }
+
+        .checkout-form {
+            border: 0;
+            border-radius: 18px;
+            box-shadow: 0 14px 36px rgba(15, 23, 42, 0.1);
+            gap: 20px;
+            padding: 32px;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            background: #fbfdff;
+            border: 2px solid #dbe4f0;
+            border-radius: 10px;
+            padding: 13px 15px;
+            transition: border-color 160ms ease, box-shadow 160ms ease;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.1);
+            outline: 0;
+        }
+
+        .checkout-summary {
+            background: #eff6ff;
+            border: 0;
+            border-left: 4px solid var(--accent);
+            border-radius: 10px;
+            padding: 16px 18px;
+        }
+
+        #tra-cuu-don {
+            background: #f3f6fb;
+        }
+
+        #order-lookup-form {
+            max-width: 700px;
+        }
+
         @media (max-width: 700px) {
             .nav-toggle {
                 display: block;
@@ -550,16 +821,21 @@
                 box-shadow: var(--shadow);
                 display: none;
                 flex-direction: column;
-                gap: 16px;
+                gap: 8px;
                 left: 0;
                 padding: 20px 16px;
                 position: absolute;
                 right: 0;
-                top: 72px;
+                top: 78px;
             }
 
             .main-nav.is-open {
                 display: flex;
+            }
+
+            .main-nav a {
+                text-align: center;
+                width: 100%;
             }
 
             .hero-content,
@@ -614,6 +890,7 @@
                 <a href="#san-pham">Sản phẩm</a>
                 <a class="cart-link" href="#gio-hang">Giỏ hàng (0)</a>
                 <a href="#dat-hang">Đặt hàng</a>
+                <a href="#tra-cuu-don">Tra cứu đơn</a>
             </nav>
         </div>
     </header>
@@ -658,7 +935,7 @@
             <div class="container">
                 <div class="section-heading">
                     <h2>Vì sao chọn Tech Việt?</h2>
-                    <p>Các tính năng mua sắm sẽ được bổ sung trong những bước tiếp theo.</p>
+                    <p>Mọi bước mua sắm được thiết kế đơn giản, rõ ràng và thuận tiện.</p>
                 </div>
                 <div class="feature-grid">
                     <article class="feature-card">
@@ -733,6 +1010,30 @@
                 </form>
             </div>
         </section>
+
+        <section id="tra-cuu-don" class="section">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Tra cứu đơn hàng</h2>
+                    <p>Nhập mã đơn và số điện thoại đã dùng khi đặt hàng để xem trạng thái.</p>
+                </div>
+                <form id="order-lookup-form" class="checkout-form" novalidate>
+                    <div class="form-field">
+                        <label for="lookup-order-id">Mã đơn hàng</label>
+                        <input id="lookup-order-id" name="orderId" type="number" min="1" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="lookup-phone">Số điện thoại</label>
+                        <input id="lookup-phone" name="phone" type="tel" inputmode="numeric"
+                            value="+84" maxlength="20" placeholder="+84" required>
+                        <p class="form-hint">Nhập 9 số sau mã +84, giống thông tin lúc đặt hàng.</p>
+                    </div>
+                    <button class="button" type="submit">Tra cứu đơn hàng</button>
+                    <p id="order-lookup-message" class="checkout-message" role="status"></p>
+                    <div id="order-lookup-result" class="checkout-summary" hidden></div>
+                </form>
+            </div>
+        </section>
     </main>
 
     <footer class="site-footer">
@@ -768,11 +1069,23 @@
         const checkoutMessage = document.querySelector("#checkout-message");
         const checkoutSummary = document.querySelector("#checkout-summary");
         const customerPhoneInput = document.querySelector("#customer-phone");
+        const orderLookupForm = document.querySelector("#order-lookup-form");
+        const lookupPhoneInput = document.querySelector("#lookup-phone");
+        const orderLookupMessage = document.querySelector("#order-lookup-message");
+        const orderLookupResult = document.querySelector("#order-lookup-result");
         const currencyFormatter = new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND"
         });
         const cartStorageKey = "tech-viet-cart";
+        const productImages = {
+            "Tai nghe Bluetooth": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=85",
+            "Bàn phím cơ": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85",
+            "Chuột không dây": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85",
+            "Webcam Full HD": "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=900&q=85",
+            "Loa Bluetooth mini": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=85",
+            "Cáp sạc nhanh USB-C": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=85"
+        };
         let cart = loadCart();
 
         function createProductCard(product) {
@@ -781,12 +1094,33 @@
 
             const visual = document.createElement("div");
             visual.className = "product-visual";
-            visual.setAttribute("aria-hidden", "true");
-            visual.textContent = product.name.toLowerCase().includes("tai nghe")
+            const fallback = document.createElement("span");
+            fallback.className = "product-image-fallback";
+            fallback.textContent = product.name.toLowerCase().includes("tai nghe")
                 ? "🎧"
                 : product.name.toLowerCase().includes("bàn phím")
                     ? "⌨️"
-                    : "🖱️";
+                    : product.name.toLowerCase().includes("webcam")
+                        ? "📷"
+                        : product.name.toLowerCase().includes("loa")
+                            ? "🔊"
+                            : product.name.toLowerCase().includes("cáp")
+                                ? "🔌"
+                                : "🖱️";
+            const imageUrl = productImages[product.name];
+            if (imageUrl) {
+                const image = document.createElement("img");
+                image.className = "product-image";
+                image.alt = product.name;
+                image.loading = "lazy";
+                image.src = imageUrl;
+                image.addEventListener("error", () => {
+                    image.replaceWith(fallback);
+                }, { once: true });
+                visual.appendChild(image);
+            } else {
+                visual.appendChild(fallback);
+            }
 
             const name = document.createElement("h3");
             name.textContent = product.name;
@@ -995,21 +1329,31 @@
             return "";
         }
 
-        function keepVietnamPhonePrefix() {
-            const rawValue = customerPhoneInput.value.trim();
-            let subscriberNumber = rawValue.startsWith("+84")
-                ? rawValue.slice(3).replace(/\D/g, "")
-                : rawValue.replace(/\D/g, "").replace(/^84/, "").replace(/^0/, "");
+        function keepVietnamPhonePrefix(input) {
+            const rawValue = input.value.trim();
+            let digits = rawValue.replace(/\D/g, "");
+            if (digits.startsWith("8484")) {
+                digits = digits.slice(2);
+            }
+            const subscriberNumber = digits.replace(/^84/, "").replace(/^0/, "");
 
-            customerPhoneInput.value = `+84${subscriberNumber}`;
+            input.value = `+84${subscriberNumber}`;
         }
 
-        customerPhoneInput.addEventListener("input", keepVietnamPhonePrefix);
+        customerPhoneInput.addEventListener("input", () => keepVietnamPhonePrefix(customerPhoneInput));
+        lookupPhoneInput.addEventListener("input", () => keepVietnamPhonePrefix(lookupPhoneInput));
         customerPhoneInput.addEventListener("focus", () => {
-            keepVietnamPhonePrefix();
+            keepVietnamPhonePrefix(customerPhoneInput);
             customerPhoneInput.setSelectionRange(
                 customerPhoneInput.value.length,
                 customerPhoneInput.value.length
+            );
+        });
+        lookupPhoneInput.addEventListener("focus", () => {
+            keepVietnamPhonePrefix(lookupPhoneInput);
+            lookupPhoneInput.setSelectionRange(
+                lookupPhoneInput.value.length,
+                lookupPhoneInput.value.length
             );
         });
 
@@ -1064,6 +1408,8 @@
                     `Đặt hàng thành công. Mã đơn hàng của bạn là #${data.orderId}.`,
                     "success"
                 );
+                document.querySelector("#lookup-order-id").value = data.orderId;
+                document.querySelector("#lookup-phone").value = formData.get("customerPhone");
                 await loadProducts();
             } catch (error) {
                 console.error("Không thể đặt hàng:", error);
@@ -1130,6 +1476,85 @@
         }
 
         productSearch.addEventListener("input", renderProducts);
+
+        function setOrderLookupMessage(message, type = "") {
+            orderLookupMessage.className = `checkout-message ${type}`.trim();
+            orderLookupMessage.textContent = message;
+        }
+
+        function renderOrderLookup(order) {
+            const statusLabels = {
+                pending: "Chờ xác nhận",
+                confirmed: "Đã xác nhận",
+                shipping: "Đang giao hàng",
+                completed: "Đã giao hàng",
+                cancelled: "Đã hủy"
+            };
+            orderLookupResult.replaceChildren();
+
+            const title = document.createElement("strong");
+            title.textContent = `Đơn hàng #${order.id}`;
+            orderLookupResult.appendChild(title);
+
+            const status = document.createElement("p");
+            status.textContent = `Trạng thái: ${statusLabels[order.status] || order.status}`;
+            orderLookupResult.appendChild(status);
+
+            const customer = document.createElement("p");
+            customer.textContent = `Người nhận: ${order.customerName}`;
+            orderLookupResult.appendChild(customer);
+
+            const address = document.createElement("p");
+            address.textContent = `Địa chỉ: ${order.shippingAddress}`;
+            orderLookupResult.appendChild(address);
+
+            order.items.forEach((item) => {
+                const itemLine = document.createElement("p");
+                itemLine.textContent =
+                    `${item.name} x ${item.quantity} - ` +
+                    currencyFormatter.format(item.unitPrice * item.quantity);
+                orderLookupResult.appendChild(itemLine);
+            });
+
+            const total = document.createElement("strong");
+            total.textContent = `Tổng tiền: ${currencyFormatter.format(order.totalAmount)}`;
+            orderLookupResult.appendChild(total);
+            orderLookupResult.hidden = false;
+        }
+
+        orderLookupForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(orderLookupForm);
+            const phone = formData.get("phone");
+            const phoneError = getPhoneError(phone);
+            if (phoneError) {
+                orderLookupResult.hidden = true;
+                setOrderLookupMessage(phoneError, "error");
+                lookupPhoneInput.focus();
+                return;
+            }
+
+            const orderId = formData.get("orderId");
+            const submitButton = orderLookupForm.querySelector("button[type='submit']");
+            submitButton.disabled = true;
+            orderLookupResult.hidden = true;
+            setOrderLookupMessage("Đang tra cứu đơn hàng...");
+            try {
+                const response = await fetch(
+                    `/api/orders/${encodeURIComponent(orderId)}?phone=${encodeURIComponent(phone)}`
+                );
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || "Không thể tra cứu đơn hàng.");
+                }
+                setOrderLookupMessage("Đã tìm thấy đơn hàng.", "success");
+                renderOrderLookup(data.order);
+            } catch (error) {
+                setOrderLookupMessage(error.message, "error");
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
 
         async function loadProducts() {
             try {
