@@ -1,4 +1,4 @@
-```javascript
+
 <!doctype html>
 <html lang="vi">
 <head>
@@ -373,6 +373,63 @@
             font-weight: 700;
         }
 
+        .checkout-section {
+            background: #eef4ff;
+        }
+
+        .checkout-form {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: grid;
+            gap: 16px;
+            margin: 0 auto;
+            max-width: 800px;
+            padding: 24px;
+        }
+
+        .form-field {
+            display: grid;
+            gap: 6px;
+        }
+
+        .form-field label {
+            font-weight: 700;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font: inherit;
+            padding: 10px 12px;
+            width: 100%;
+        }
+
+        .form-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            border-color: var(--primary);
+            outline: 2px solid #bfdbfe;
+        }
+
+        .checkout-message {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .checkout-message.success {
+            color: #166534;
+        }
+
+        .checkout-message.error {
+            color: #b91c1c;
+        }
+
         .site-footer {
             background: #172033;
             color: #cbd5e1;
@@ -460,6 +517,7 @@
                 <a href="#gioi-thieu">Giới thiệu</a>
                 <a href="#san-pham">Sản phẩm</a>
                 <a class="cart-link" href="#gio-hang">Giỏ hàng (0)</a>
+                <a href="#dat-hang">Đặt hàng</a>
             </nav>
         </div>
     </header>
@@ -536,6 +594,31 @@
                 </div>
             </div>
         </section>
+
+        <section id="dat-hang" class="section checkout-section">
+            <div class="container">
+                <div class="section-heading">
+                    <h2>Đặt hàng</h2>
+                    <p>Điền thông tin để tạo đơn hàng. Chưa tích hợp thanh toán trực tuyến.</p>
+                </div>
+                <form id="checkout-form" class="checkout-form">
+                    <div class="form-field">
+                        <label for="customer-name">Họ và tên</label>
+                        <input id="customer-name" name="customerName" type="text" minlength="2" maxlength="150" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="customer-email">Email</label>
+                        <input id="customer-email" name="customerEmail" type="email" maxlength="254" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="shipping-address">Địa chỉ giao hàng</label>
+                        <textarea id="shipping-address" name="shippingAddress" minlength="5" maxlength="500" required></textarea>
+                    </div>
+                    <button class="button" type="submit">Xác nhận đặt hàng</button>
+                    <p id="checkout-message" class="checkout-message" role="status"></p>
+                </form>
+            </div>
+        </section>
     </main>
 
     <footer class="site-footer">
@@ -566,6 +649,8 @@
         const cartEmpty = document.querySelector("#cart-empty");
         const cartNotice = document.querySelector("#cart-notice");
         const cartTotal = document.querySelector("#cart-total");
+        const checkoutForm = document.querySelector("#checkout-form");
+        const checkoutMessage = document.querySelector("#checkout-message");
         const currencyFormatter = new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND"
@@ -749,6 +834,63 @@
             saveCart();
             renderCart();
         }
+
+        function setCheckoutMessage(message, type = "") {
+            checkoutMessage.className = `checkout-message ${type}`.trim();
+            checkoutMessage.textContent = message;
+        }
+
+        checkoutForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (cart.length === 0) {
+                setCheckoutMessage("Hãy thêm ít nhất một sản phẩm vào giỏ hàng.", "error");
+                return;
+            }
+
+            const formData = new FormData(checkoutForm);
+            const submitButton = checkoutForm.querySelector("button[type='submit']");
+            submitButton.disabled = true;
+            setCheckoutMessage("Đang tạo đơn hàng...");
+
+            try {
+                const response = await fetch("/api/orders", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        customerName: formData.get("customerName"),
+                        customerEmail: formData.get("customerEmail"),
+                        shippingAddress: formData.get("shippingAddress"),
+                        items: cart.map((item) => ({
+                            productId: item.id,
+                            quantity: item.quantity
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || "Không thể tạo đơn hàng.");
+                }
+
+                cart = [];
+                saveCart();
+                renderCart();
+                checkoutForm.reset();
+                setCheckoutMessage(
+                    `Đặt hàng thành công. Mã đơn hàng của bạn là #${data.orderId}.`,
+                    "success"
+                );
+                await loadProducts();
+            } catch (error) {
+                console.error("Không thể đặt hàng:", error);
+                setCheckoutMessage(error.message, "error");
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
 
         productGrid.addEventListener("click", (event) => {
             const addButton = event.target.closest("[data-product-id]");

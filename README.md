@@ -1,6 +1,8 @@
 # E-commerce Website + Monitoring Stack
 
-Docker Compose starter for the coursework: online shop, MySQL, phpMyAdmin, Nginx reverse proxy, Prometheus, Grafana, Loki, Promtail and exporters.
+Đồ án Đề 9 - Website thương mại điện tử của sinh viên **Phạm Thùy Dung (DTC245310061)**.
+Hệ thống gồm website bán hàng, MySQL, phpMyAdmin, Nginx reverse proxy, Prometheus,
+Grafana, Loki, Promtail và các exporter.
 
 ## Requirements
 - Docker Desktop running with Linux containers
@@ -23,6 +25,23 @@ Docker Compose starter for the coursework: online shop, MySQL, phpMyAdmin, Nginx
 
 Grafana login uses `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` in `.env`. MySQL root and app credentials are in `.env`. Do not commit `.env`, private keys, or production secrets.
 
+## Chức năng website
+
+- `GET /api/products`: đọc danh sách sản phẩm từ MySQL.
+- Khi ứng dụng khởi động, ba sản phẩm mẫu chỉ được thêm nếu chưa tồn tại; dữ liệu
+  sản phẩm hiện có không bị ghi đè.
+- `POST /api/orders`: kiểm tra dữ liệu, khóa tồn kho bằng transaction, tạo `orders`
+  và `order_items`, sau đó trừ tồn kho.
+- Trang chủ hỗ trợ thêm, sửa, xóa giỏ hàng bằng `localStorage`.
+- Form đặt hàng cơ bản tạo đơn ở trạng thái `pending`; chưa tích hợp thanh toán.
+
+Ví dụ tạo đơn hàng:
+
+```powershell
+$body = '{"customerName":"Pham Thuy Dung","customerEmail":"dung@example.com","shippingAddress":"Ha Noi, Viet Nam","items":[{"productId":1,"quantity":1}]}'
+curl.exe -k -X POST https://localhost/api/orders -H "Content-Type: application/json" -d $body
+```
+
 ## Initial validation
 - `docker compose ps`
 - `docker compose logs --tail=100 mysql app nginx prometheus grafana loki promtail`
@@ -34,7 +53,34 @@ Grafana login uses `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` in `.env`. 
   - `{service="app"}`
   - `{service="nginx"}`
   - `{service="mysql"}`
+- Additional LogQL queries for the demonstration:
+  - `{service="app"} |= "order_creation"`
+  - `{service="app"} | json | status="200"`
+  - `{service="nginx"} |~ "GET|POST"`
   Log labels depend on Docker Desktop log discovery; adjust selectors based on labels shown in Explore.
+
+Prometheus targets cần ở trạng thái `UP`:
+
+- `ecommerce-app`
+- `nginx-exporter`
+- `mysqld-exporter`
+- `cadvisor`
+- `prometheus`
+
+Dashboard Grafana `E-commerce Infrastructure Overview` hiển thị CPU, memory container,
+request HTTP và kết nối Nginx.
+
+## Lịch sử commit đề xuất cho báo cáo
+
+Lịch sử Git hiện có các commit chức năng. Khi nộp bài, có thể trình bày theo 3 mốc:
+
+1. **Commit 1 - Infrastructure foundation**: Docker Compose, MySQL/phpMyAdmin,
+   Nginx HTTPS và security headers.
+2. **Commit 2 - Prometheus and Grafana monitoring**: app metrics, Nginx exporter,
+   MySQL exporter, cAdvisor và dashboard.
+3. **Commit 3 - Loki centralized logging**: Loki, Promtail và các truy vấn LogQL.
+
+Các commit chức năng bổ sung gồm API sản phẩm, giỏ hàng và đặt hàng.
 
 ## Important security and coursework notes
 - This is a local educational starter, not a production deployment.
@@ -44,4 +90,5 @@ Grafana login uses `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` in `.env`. 
 - cAdvisor needs elevated host visibility for metrics; review its permissions during the hardening demonstration.
 - Docker socket access by Promtail is powerful even when mounted read-only. Document this trade-off and restrict access to the host.
 - For a fully hardened production system, use managed secrets, a trusted TLS certificate, authentication for admin tools, and stricter service-specific network policies.
-- The initial app is only an infrastructure health-check starter. Implement product CRUD, cart, checkout, and order management as the next development phase.
+- The project is a local educational deployment, not a production payment system.
+- See `REPORT.md` for the coursework report draft and demonstration checklist.

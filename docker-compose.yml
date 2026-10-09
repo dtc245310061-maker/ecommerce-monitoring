@@ -115,8 +115,30 @@ services:
       - monitoring
       - backend
     depends_on:
+      - cadvisor
       - nginx-exporter
       - mysqld-exporter
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
+    restart: unless-stopped
+    command:
+      - --docker_only=true
+      - --housekeeping_interval=10s
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    expose:
+      - "8080"
+    networks:
+      - monitoring
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
 
   grafana:
     image: grafana/grafana:12.1.0
