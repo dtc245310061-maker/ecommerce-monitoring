@@ -2,7 +2,7 @@
   "name": "ecommerce-demo",
   "version": "1.0.0",
   "private": true,
-  "description": "Starter app for ecommerce infrastructure project",
+  "description": "Tech Viet ecommerce storefront for De 9",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

@@ -106,6 +106,8 @@ services:
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=7d
       - --web.enable-lifecycle
+      - --web.external-url=https://localhost/prometheus/
+      - --web.route-prefix=/prometheus/
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus

@@ -1,109 +1,161 @@
-# Website thương mại điện tử và hệ thống giám sát
+# Tech Viet - De 9: Website thuong mai dien tu
 
-Đồ án Đề 9 - Website thương mại điện tử của sinh viên **Phạm Thùy Dung (DTC245310061)**.
-Hệ thống gồm website bán hàng, MySQL, phpMyAdmin, Nginx reverse proxy, Prometheus,
-Grafana, Loki, Promtail và các exporter.
+Do an trien khai website ban hang online theo **De 9** - Pham Thuy Dung
+(**DTC245310061**). Toan bo he thong chay bang Docker Compose va gom:
 
-## Yêu cầu cài đặt
-- Docker Desktop đang chạy với Linux containers
-- Docker Compose phiên bản 2 trở lên
-- Git
+- Website ban hang: san pham, tim kiem, gio hang, dat hang, tra cuu don hang.
+- MySQL va phpMyAdmin de luu tru/quan tri du lieu.
+- Nginx reverse proxy voi HTTPS tu ky va security headers.
+- Prometheus, Grafana, cAdvisor, Nginx Exporter va MySQL Exporter.
+- Loki va Promtail de tap trung log, truy van bang LogQL.
 
-## Cài đặt lần đầu (PowerShell)
-1. Sao chép `.env.example` thành `.env`.
-2. Mở `.env` và thay mọi giá trị `CHANGE_ME_*` bằng mật khẩu mạnh, riêng biệt.
-3. Chạy `docker compose config` để kiểm tra file Compose.
-4. Chạy `docker compose up -d --build`.
-5. Kiểm tra bằng `docker compose ps` và `docker compose logs --tail=100`.
+## 1. Yeu cau
 
-## Địa chỉ truy cập cục bộ
-- Website: https://localhost (chứng chỉ tự ký; trình duyệt có thể hiển thị cảnh báo)
-- phpMyAdmin: https://localhost/phpmyadmin/
-- Grafana: https://localhost/grafana/
-- Prometheus: https://localhost/prometheus/ (qua Nginx reverse proxy; port 9090
-  không mở trực tiếp ra máy host)
-- Loki: chỉ truy cập trong mạng Docker, truy vấn qua Grafana
+- Docker Desktop dang chay voi Linux containers.
+- Docker Compose v2 (lenh su dung la `docker compose`, khong phai `docker-compose`).
+- Git.
+- Mo PowerShell tai thu muc muon luu ma nguon.
 
-Đăng nhập Grafana sử dụng `GRAFANA_ADMIN_USER` và `GRAFANA_ADMIN_PASSWORD` trong
-`.env`. Thông tin đăng nhập MySQL root và ứng dụng cũng nằm trong `.env`. Không
-được commit `.env`, khóa riêng tư hoặc thông tin bí mật dùng cho môi trường thật.
+## 2. Chay lan dau bang PowerShell
 
-## Chức năng website
-
-- `GET /api/products`: đọc danh sách sản phẩm từ MySQL.
-- Khi ứng dụng khởi động, các sản phẩm mẫu chỉ được thêm nếu chưa tồn tại; dữ liệu
-  sản phẩm hiện có không bị ghi đè.
-- `POST /api/orders`: kiểm tra dữ liệu, khóa tồn kho bằng transaction, tạo `orders`
-  và `order_items`, sau đó trừ tồn kho.
-- `GET /api/orders/:orderId?phone=+84xxxxxxxxx`: tra cứu trạng thái đơn hàng
-  bằng mã đơn và số điện thoại.
-- Trang chủ hỗ trợ thêm, sửa, xóa giỏ hàng bằng `localStorage`.
-- Có thanh tìm kiếm sản phẩm theo tên hoặc mô tả.
-- Form đặt hàng cơ bản yêu cầu họ tên, email, số điện thoại định dạng `+84` với
-  đúng 9 chữ số phía sau và địa chỉ; đơn ở trạng thái `pending`, chưa tích hợp
-  thanh toán.
-- Có thể tra cứu đơn hàng bằng mã đơn và số điện thoại đã dùng khi đặt hàng.
-
-Ví dụ tạo đơn hàng:
+Tat ca lenh ben duoi deu nhap trong **PowerShell**:
 
 ```powershell
-$body = '{"customerName":"Pham Thuy Dung","customerEmail":"dung@example.com","customerPhone":"+84912345678","shippingAddress":"Ha Noi, Viet Nam","items":[{"productId":1,"quantity":1}]}'
-curl.exe -k -X POST https://localhost/api/orders -H "Content-Type: application/json" -d $body
+git clone https://github.com/<tai-khoan>/<ten-repository>.git
+Set-Location .\ecommerce-monitoring
+Copy-Item .env.example .env
+notepad .env
 ```
 
-## Kiểm tra ban đầu
-- `docker compose ps`
-- `docker compose logs --tail=100 mysql app nginx prometheus grafana loki promtail`
-- Mở `https://localhost/health`
-- Mở `https://localhost/api/status`
-- Mở `https://localhost/prometheus/` và kiểm tra trang Prometheus.
-- Trong Prometheus, xác nhận các target thu thập metrics có trạng thái `UP`.
-- Trong Grafana, xác nhận nguồn dữ liệu Prometheus và Loki.
-- Trong Grafana Explore, chọn Loki và thử:
-  - `{service="app"}`
-  - `{service="nginx"}`
-  - `{service="mysql"}`
-- Các truy vấn LogQL bổ sung để trình diễn:
-  - `{service="app"} |= "order_creation"`
-  - `{service="app"} | json | status="200"`
-  - `{service="nginx"} |~ "GET|POST"`
-  Nhãn log phụ thuộc vào cơ chế phát hiện log của Docker Desktop; điều chỉnh bộ
-  lọc theo các nhãn hiển thị trong Explore.
+Trong `.env`, thay tat ca gia tri `CHANGE_ME_*` bang mat khau manh, rieng biet.
+Luu file sau khi sua, sau do kiem tra va khoi dong:
 
-Prometheus targets cần ở trạng thái `UP`:
+```powershell
+docker compose config
+docker compose up -d --build
+docker compose ps
+```
 
-- `ecommerce-app`
-- `nginx-exporter`
-- `mysqld-exporter`
-- `cadvisor`
-- `prometheus`
+Neu muon xem log khi khoi dong:
 
-Dashboard Grafana `E-commerce Infrastructure Overview` hiển thị CPU, bộ nhớ
-container, request HTTP, kết nối Nginx và trạng thái MySQL/số kết nối database.
+```powershell
+docker compose logs --tail=100 app nginx mysql
+```
 
-## Lịch sử commit đề xuất cho báo cáo
+Lan chay sau chi can:
 
-Lịch sử Git hiện có các commit chức năng. Khi nộp bài, có thể trình bày theo 3 mốc:
+```powershell
+Set-Location C:\duong-dan\ecommerce-monitoring
+docker compose up -d
+```
 
-1. **Commit 1 - Hạ tầng nền tảng**: Docker Compose, MySQL/phpMyAdmin,
-   Nginx HTTPS và các header bảo mật.
-2. **Commit 2 - Giám sát bằng Prometheus và Grafana**: metrics ứng dụng, Nginx
-   exporter, MySQL exporter, cAdvisor và dashboard.
-3. **Commit 3 - Tập trung log bằng Loki**: Loki, Promtail và các truy vấn LogQL.
+## 3. Dia chi demo
 
-Các commit chức năng bổ sung gồm API sản phẩm, giỏ hàng và đặt hàng.
+Chap nhan canh bao cua trinh duyet vi day la chung chi tu ky:
 
-## Lưu ý về bảo mật và đồ án
-- Đây là hệ thống học tập chạy cục bộ, chưa phải hệ thống triển khai thực tế.
-- HTTPS sử dụng chứng chỉ tự ký được tạo trong quá trình build image.
-- Các endpoint giám sát không mở trực tiếp ra các port của máy host.
-- Network `backend` là network nội bộ; chỉ các service tham gia network này mới
-  truy cập được luồng dữ liệu database.
-- cAdvisor cần quyền quan sát cao hơn trên host để thu thập metrics; cần trình bày
-  rõ quyền này khi demo hardening.
-- Promtail sử dụng Docker socket dù mount ở chế độ chỉ đọc, đây vẫn là quyền nhạy
-  cảm. Cần trình bày trade-off này và giới hạn quyền truy cập host.
-- Khi triển khai thực tế cần dùng secret manager, chứng chỉ TLS tin cậy, xác thực
-  cho công cụ quản trị và network policy chặt chẽ hơn.
-- Dự án là hệ thống học tập cục bộ, chưa phải hệ thống thanh toán thực tế.
-- Xem `REPORT.md` để đọc bản dự thảo báo cáo và checklist trình diễn.
+| Thanh phan | Dia chi |
+|---|---|
+| Website | <https://localhost> |
+| phpMyAdmin | <https://localhost/phpmyadmin/> |
+| Grafana | <https://localhost/grafana/> |
+| Prometheus | <https://localhost/prometheus/> |
+| Health check | <https://localhost/health> |
+| API trang thai | <https://localhost/api/status> |
+
+Dang nhap Grafana bang `GRAFANA_ADMIN_USER` va `GRAFANA_ADMIN_PASSWORD` trong
+`.env`. phpMyAdmin su dung host `mysql`, user `ecommerce_app` va mat khau
+`APP_DB_PASSWORD`; tai khoan root dung `MYSQL_ROOT_PASSWORD`.
+
+## 4. Chuc nang website
+
+1. Tai danh sach san pham tu MySQL va tim kiem theo ten/mo ta.
+2. Them, tang/giam so luong, xoa san pham trong gio hang (luu bang
+   `localStorage`).
+3. Dat hang voi ho ten, email, so dien thoai `+84xxxxxxxxx` va dia chi.
+4. Backend kiem tra du lieu, khoa ton kho bang transaction, tao `orders`,
+   `order_items` va tru ton kho an toan.
+5. Tra cuu trang thai bang ma don va so dien thoai da dung khi dat hang.
+
+## 5. Kiem tra cac tieu chi ky thuat
+
+### Nginx va security headers
+
+```powershell
+curl.exe -k -I https://localhost
+curl.exe -k https://localhost/health
+```
+
+Nginx chuyen tiep request den app, phpMyAdmin, Grafana va Prometheus. Cac
+header `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
+`Permissions-Policy` duoc cau hinh trong `nginx\nginx.conf`.
+
+### Prometheus va Grafana
+
+Mo Grafana, vao dashboard **E-commerce Infrastructure Overview** va kiem tra
+cac target `ecommerce-app`, `nginx-exporter`, `mysqld-exporter`, `cadvisor`
+va `prometheus` deu o trang thai `UP`.
+
+Lenh kiem tra nhanh trong PowerShell:
+
+```powershell
+docker compose ps
+docker compose logs --tail=100 prometheus grafana
+```
+
+### Loki va LogQL
+
+Trong Grafana > Explore, chon datasource Loki va thu cac truy van:
+
+```logql
+{service="app"}
+{service="app"} |= "order_creation"
+{service="nginx"} |~ "GET|POST"
+```
+
+Neu Docker Desktop dat label khac, xem danh sach label trong Explore va dieu
+chinh selector. Tao mot don hang de phat sinh log `order_creation`.
+
+### Hardening
+
+- App chay bang user non-root `node`.
+- App, MySQL va phpMyAdmin duoc tach khoi bang network `frontend`/`backend`;
+  network `backend` la internal.
+- Container duoc ap dung `no-new-privileges`, `cap_drop: ALL` o cac service
+  phu hop va filesystem read-only cho app/Nginx.
+- Database chi `expose` trong Docker network, khong mo truc tiep port ra host.
+- Mat khau nam trong `.env` va `.env` khong duoc commit.
+- Nginx bat HTTPS tu ky, tat `server_tokens` va them security headers.
+
+`cAdvisor` va `Promtail` can mount mot so tai nguyen read-only cua Docker host
+de thu thap metrics/log; day la trade-off can neu ro khi demo hardening.
+
+## 6. Lenh quan tri PowerShell
+
+```powershell
+# Xem trang thai va log
+docker compose ps
+docker compose logs -f app
+
+# Khoi dong lai mot service
+docker compose restart app
+
+# Dung he thong (giu lai volume du lieu)
+docker compose down
+
+# Xoa ca volume - CHI dung khi muon xoa du lieu demo
+docker compose down -v
+```
+
+Khong commit `.env`, private key, certificate hoac thong tin dang nhap that.
+Day la he thong hoc tap cuc bo, chua tich hop thanh toan va chua phu hop cho
+du lieu production.
+
+## 7. Moc commit de nop bai
+
+1. **Commit 1 - Ha tang va website:** Docker Compose, MySQL/phpMyAdmin, Nginx
+   HTTPS, security headers va luong mua hang.
+2. **Commit 2 - Giam sat:** Prometheus, Grafana, exporters va dashboard.
+3. **Commit 3 - Tap trung log:** Loki, Promtail va cac truy van LogQL.
+
+Can duy tri commit message ro rang va bo sung anh minh hoa website, phpMyAdmin,
+Grafana, LogQL va hardening vao bao cao toi thieu 10 trang.
