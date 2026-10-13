@@ -21,7 +21,7 @@ Do an trien khai website ban hang online theo **De 9** - Pham Thuy Dung
 Tat ca lenh ben duoi deu nhap trong **PowerShell**:
 
 ```powershell
-git clone https://github.com/<tai-khoan>/<ten-repository>.git
+git clone https://github.com/dtc245310061-maker/ecommerce-monitoring.git
 Set-Location .\ecommerce-monitoring
 Copy-Item .env.example .env
 notepad .env

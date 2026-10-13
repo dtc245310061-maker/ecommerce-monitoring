@@ -10,7 +10,7 @@ promClient.collectDefaultMetrics({ register });
 
 const httpRequests = new promClient.Counter({
   name: "ecommerce_http_requests_total",
-  help: "Total HTTP requests handled by the ecommerce starter app",
+  help: "Total HTTP requests handled by the ecommerce app",
   labelNames: ["method", "route", "status"],
   registers: [register]
 });
@@ -43,6 +43,7 @@ const pool = mysql.createPool({
   user: process.env.DB_USER || "ecommerce_app",
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || "ecommerce",
+  charset: "utf8mb4",
   waitForConnections: true,
   connectionLimit: 5
 });
@@ -100,6 +101,40 @@ async function ensureOrderPhoneColumn() {
 }
 
 async function ensureDefaultProducts() {
+  const [existingProducts] = await pool.query(
+    "SELECT id, name, description FROM products ORDER BY id"
+  );
+  for (const product of existingProducts) {
+    if (!/[ÃÂÆÐ]/.test(`${product.name} ${product.description || ""}`)) {
+      continue;
+    }
+
+    const replacement = defaultProducts[Number(product.id) - 1];
+    if (!replacement || Number(product.id) > defaultProducts.length) {
+      continue;
+    }
+
+    await pool.execute(
+      "UPDATE products SET name = ?, description = ? WHERE id = ?",
+      [replacement.name, replacement.description, product.id]
+    );
+    console.log(JSON.stringify({
+      level: "info",
+      message: "product_encoding_repaired",
+      productId: product.id
+    }));
+  }
+
+  const defaultNames = defaultProducts.map((product) => product.name);
+  const defaultNamePlaceholders = defaultNames.map(() => "?").join(",");
+  await pool.query(
+    `DELETE p FROM products p
+     LEFT JOIN order_items oi ON oi.product_id = p.id
+     WHERE p.id > ? AND p.name IN (${defaultNamePlaceholders})
+       AND oi.product_id IS NULL`,
+    [defaultProducts.length, ...defaultNames]
+  );
+
   for (const product of defaultProducts) {
     await pool.execute(
       `INSERT INTO products (name, description, price, stock)
