@@ -122,6 +122,7 @@ services:
       - mysqld-exporter
 
   cadvisor:
+  
     image: gcr.io/cadvisor/cadvisor:v0.52.1
     restart: unless-stopped
     command:
@@ -141,6 +142,18 @@ services:
     read_only: true
     tmpfs:
       - /tmp
+
+  node-exporter:
+    image: prom/node-exporter:v1.9.1
+    container_name: ecommerce-node-exporter
+    restart: unless-stopped
+    networks:
+      - monitoring
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
 
   grafana:
     image: grafana/grafana:12.1.0
