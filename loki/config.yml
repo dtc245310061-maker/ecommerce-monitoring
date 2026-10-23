@@ -30,3 +30,5 @@ compactor:
   delete_request_store: filesystem
 analytics:
   reporting_enabled: false
+
+# Centralized logging configuration
