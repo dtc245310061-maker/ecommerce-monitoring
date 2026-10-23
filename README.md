@@ -45,7 +45,7 @@ docker compose logs --tail=100 app nginx mysql
 Lan chay sau chi can:
 
 ```powershell
-Set-Location C:\duong-dan\ecommerce-monitoring
+Set-Location "C:\Users\admin\ecommerce-monitoring"
 docker compose up -d
 ```
 
